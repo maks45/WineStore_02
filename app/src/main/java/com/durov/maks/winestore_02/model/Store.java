@@ -6,6 +6,22 @@ import java.io.Serializable;
 
 public class Store implements Serializable {
 
+    //constants for database name
+    private static final String ID = "id";
+    private static final String NAME = "name";
+    private static final String TAGS = "tags";
+    private static final String ADRESS_LINE_1 = "address_line_1";
+    private static final String ADRESS_LINE_2 = "address_line_2";
+    private static final String CITY = "city";
+    private static final String POSTAL_CODE = "postal_code";
+    private static final String TELEPHONE = "telephone";
+    private static final String FAX = "fax";
+    private static final String LATITUDE = "latitude";
+    private static final String LONGITUDE = "longitude";
+    private static final String PRODUCTS_COUNT = "products_count";
+    private static final String HAS_PARKING = "has_parking";
+
+    //variables
     @SerializedName("id")
     private int id;
     @SerializedName("is_dead")
