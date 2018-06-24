@@ -11,6 +11,7 @@ import android.view.MotionEvent;
 import android.widget.Toast;
 
 import com.durov.maks.winestore_02.R;
+import com.durov.maks.winestore_02.StoreApplication;
 import com.durov.maks.winestore_02.adapter.StoreAdapter;
 import com.durov.maks.winestore_02.database.StoreDatabaseHelper;
 import com.durov.maks.winestore_02.model.Store;
@@ -30,18 +31,14 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class MainActivity extends AppCompatActivity {
 
-    public static final String ROOT_URL = "http://lcboapi.com/";
+    public static final int STORES_PER_PAGE = 50;
     public static final String TAG = "MY_LOG";
-    public static final String EXTRA_STORE ="com.durov.maks.winestore_01.STORE";
+    public static final String EXTRA_STORE ="com.durov.maks.winestore_02.STORE";
 
-
-    private StoreDatabaseHelper storeDatabaseHelper;
-    private RecyclerView recyclerView;
     private CompositeDisposable compositeDisposable;
     private StoreAdapter storeAdapter;
     private ArrayList<Store> storesArrayList;
     private StoreList storeList;
-    private RecyclerView.LayoutManager layoutManager;
     private int nextPage;
     private boolean isPageAddNow;
     private boolean isPageLast;
@@ -53,33 +50,33 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         //init
         compositeDisposable = new CompositeDisposable();
-        storeDatabaseHelper = new StoreDatabaseHelper(this);
         storesArrayList = new ArrayList<>();
-        this.nextPage =1;
-        this.isPageLast =false;
-        this.isPageAddNow = false;//if true no load new page if page already loaded
-        this.offlineMode =false;//if true load page from database
+        nextPage =1;
+        isPageLast =false;//if true: no need load new page
+        isPageAddNow = false;//if true: no need load new page (page already loaded)
+        offlineMode =false;//if true: load page from database
         initRecyclerView();
         loadData();
     }
     private void initRecyclerView(){
-            this.recyclerView = findViewById(R.id.main_activity_recycler_view);
-            this.storeAdapter = new StoreAdapter(storesArrayList);
-            this.layoutManager = new LinearLayoutManager(getApplicationContext());
-            this.recyclerView.setLayoutManager(layoutManager);
-            this.recyclerView.setAdapter(this.storeAdapter);
-            this.recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            Log.d(TAG,"init recycler view");
+            RecyclerView recyclerView = findViewById(R.id.main_activity_recycler_view);
+            storeAdapter = new StoreAdapter(storesArrayList);
+            RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getApplicationContext());
+            recyclerView.setLayoutManager(layoutManager);
+            recyclerView.setAdapter(storeAdapter);
+            recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
                 @Override
                 public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
                     super.onScrollStateChanged(recyclerView, newState);
                     if (!recyclerView.canScrollVertically(1)) {
                         loadData();
                         storeAdapter.notifyDataSetChanged();
-                        MainActivity.this.isPageAddNow = true;
+                        isPageAddNow = true;
                     }
                 }
             });
-            this.storeAdapter.setOnClick(new StoreAdapter.OnItemClicked() {
+            storeAdapter.setOnClick(new StoreAdapter.OnItemClicked() {
                 @Override
                 public void onItemClick(Store store) {
                     startStoreActivity(store);
@@ -88,50 +85,49 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void loadData(){
-        if(this.storeList!=null){
-            this.nextPage = this.storeList.getPager().getNextPage();
-            this.isPageLast = this.storeList.getPager().isFinalPage();
+        if(storeList!=null && !offlineMode){
+            nextPage = storeList.getPager().getNextPage();
+            isPageLast = storeList.getPager().isFinalPage();
         }
         //load from network
-        if(!this.isPageLast && !this.isPageAddNow && !this.offlineMode) {
-            RequestStoreListInterface requestStoreListInterface = new Retrofit.Builder()
-                    .baseUrl(ROOT_URL)
-                    .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
-                    .addConverterFactory(GsonConverterFactory.create())
-                    .build().create(RequestStoreListInterface.class);
-
-            compositeDisposable.add(requestStoreListInterface.register(String.valueOf(this.nextPage))
+        if(!isPageLast && !isPageAddNow && !offlineMode) {
+            //Log.d(TAG,"online_mode");
+            compositeDisposable.add(((StoreApplication) this.getApplication())
+                    .getRequestStoreListInterface()
+                    .register(String.valueOf(nextPage),String.valueOf(STORES_PER_PAGE))
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribeOn(Schedulers.io())
                     .subscribe(this::handleResponse, this::handleError));
         }
         //load from database if you are offline
-        if(this.offlineMode){
-            this.storeList = storeDatabaseHelper.getStoreList(this.nextPage);
-            if(this.storeList!=null){
-                this.storesArrayList.addAll(storeList.getStores());
-                this.storeAdapter.notifyDataSetChanged();
+        if(offlineMode){
+            //Log.d(TAG,"offline mode");
+            storesArrayList.clear();
+            storesArrayList.addAll(((StoreApplication) this.getApplication()).getStoreDatabaseHelper().getAllStores());
+            if(storesArrayList!=null){
+                storeAdapter.notifyDataSetChanged();
             }else{
-                Toast.makeText(this,"No more results",Toast.LENGTH_SHORT).show();
+                Log.d(TAG,"database return null");
             }
-            this.isPageAddNow = false;
-            //Toast.makeText(this,"Load offline page: "+String.valueOf(this.nextPage),Toast.LENGTH_SHORT).show();
+            isPageAddNow = false;
         }
 
     }
 
     private void handleResponse(StoreList storeList) {
+        Log.d(TAG,"handleResponse");
         this.storeList = storeList;
         if(storeList!=null){
-            this.storesArrayList.addAll(storeList.getStores());
-            this.storeAdapter.notifyDataSetChanged();
-            this.isPageAddNow = false;
+            storesArrayList.addAll(storeList.getStores());
+            storeAdapter.notifyDataSetChanged();
+            isPageAddNow = false;
         }else{
-            this.isPageAddNow = false;
-            Toast.makeText(this,"No more results",Toast.LENGTH_SHORT).show();
+            isPageAddNow = false;
+            offlineMode = true;
+            loadData();
         }
-        if(!this.offlineMode) {
-            this.storeDatabaseHelper.saveStoreList(storeList);
+        if(!offlineMode) {
+            ((StoreApplication) this.getApplication()).getStoreDatabaseHelper().saveStoreArrayList(storeList.getStores());
         }
     }
 
@@ -143,12 +139,11 @@ public class MainActivity extends AppCompatActivity {
         // A network error happened
         if (error instanceof IOException) {
             Log.i(TAG, error.getMessage() + " / " + error.getClass());
-            this.offlineMode =true;
+            offlineMode =true;
             Toast.makeText(this,"You are offline",Toast.LENGTH_SHORT).show();
             loadData();
         }
-        //Toast.makeText(this,"OfflineMode: "+String.valueOf(this.offlineMode),Toast.LENGTH_SHORT).show();
-        this.isPageAddNow = false;
+        isPageAddNow = false;
     }
 
     private void startStoreActivity(Store store){

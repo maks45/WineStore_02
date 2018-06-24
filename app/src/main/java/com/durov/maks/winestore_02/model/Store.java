@@ -6,22 +6,85 @@ import java.io.Serializable;
 
 public class Store implements Serializable {
 
-    //constants for database name
-    private static final String ID = "id";
-    private static final String NAME = "name";
-    private static final String TAGS = "tags";
-    private static final String ADRESS_LINE_1 = "address_line_1";
-    private static final String ADRESS_LINE_2 = "address_line_2";
-    private static final String CITY = "city";
-    private static final String POSTAL_CODE = "postal_code";
-    private static final String TELEPHONE = "telephone";
-    private static final String FAX = "fax";
-    private static final String LATITUDE = "latitude";
-    private static final String LONGITUDE = "longitude";
-    private static final String PRODUCTS_COUNT = "products_count";
-    private static final String HAS_PARKING = "has_parking";
+    //constants for database
+    public static final String ID = "id";
+    public static final String IS_DEAD = "is_dead";
+    public static final String NAME = "name";
+    public static final String TAGS = "tags";
+    public static final String ADRESS_LINE_1 = "address_line_1";
+    public static final String ADRESS_LINE_2 = "address_line_2";
+    public static final String CITY = "city";
+    public static final String POSTAL_CODE = "postal_code";
+    public static final String TELEPHONE = "telephone";
+    public static final String FAX = "fax";
+    public static final String LATITUDE = "latitude";
+    public static final String LONGITUDE = "longitude";
+    public static final String PRODUCTS_COUNT = "products_count";
+    public static final String HAS_PARKING = "has_parking";
+    public static final String HAS_PRODUCT_CONSULTANT = "has_product_consultant";
+    public static final String HAS_TASTING_BAR = "has_tasting_bar";
+    public static final String HAS_TRANSIT_ACCES = "has_transit_access";
+    public static final String UPDATED_AT = "updated_at";
+    public static final String SUNDAY_OPEN = "sunday_open";
+    public static final String SUNDAY_CLOSE = "sunday_close";
+    public static final String MONDAY_OPEN = "monday_open";
+    public static final String MONDAY_CLOSE = "monday_close";
+    public static final String TUESDAY_OPEN = "tuesday_open";
+    public static final String TUESDAY_CLOSE = "tuesday_close";
+    public static final String WEDNESDAY_OPEN = "wednesday_open";
+    public static final String WEDNESDAY_CLOSE = "wednesday_close";
+    public static final String THURSDAY_OPEN = "thursday_open";
+    public static final String THURSDAY_CLOSE = "thursday_close";
+    public static final String FRIDAY_OPEN = "friday_open";
+    public static final String FRIDAY_CLOSE = "friday_close";
+    public static final String SATURDAY_OPEN = "saturday_open";
+    public static final String SATURDAY_CLOSE = "saturday_close";
+
 
     //variables
+
+    /*{"id":217,
+    "is_dead":false,
+    "name":"Queens Quay \u0026 Yonge",
+    "tags":"queens quay yonge 2 cooper street queen's toronto central toronto-central torontocentral m5e0b8",
+    "address_line_1":"2 Cooper Street",
+    "address_line_2":"Queen's Quay",
+    "city":"Toronto",
+    "postal_code":"M5E0B8",
+    "telephone":"(416) 864-6777",
+    "fax":"(416) 864-6863",
+    "latitude":43.643,
+    "longitude":-79.3723,
+    "products_count":5071,
+    "inventory_count":184579,
+    "inventory_price_in_cents":457923726,
+    "inventory_volume_in_milliliters":135626242,
+    "has_wheelchair_accessability":true,
+    "has_bilingual_services":true,
+    "has_product_consultant":true,
+    "has_tasting_bar":true,
+    "has_beer_cold_room":false,
+    "has_special_occasion_permits":false,
+    "has_vintages_corner":true,
+    "has_parking":true,
+    "has_transit_access":true,
+    "sunday_open":660,
+    "sunday_close":1080,
+    "monday_open":540,
+    "monday_close":1320,
+    "tuesday_open":540,
+    "tuesday_close":1320,
+    "wednesday_open":540,
+    "wednesday_close":1320,
+    "thursday_open":540,
+    "thursday_close":1320,
+    "friday_open":540,
+    "friday_close":1320,
+    "saturday_open":540,
+    "saturday_close":1320,
+    "updated_at":"2018-06-17T14:15:21.972Z",
+    "store_no":217}*/
+
     @SerializedName("id")
     private int id;
     @SerializedName("is_dead")
@@ -50,8 +113,49 @@ public class Store implements Serializable {
     private int productsCount;
     @SerializedName("has_parking")
     private boolean hasParking;
+    @SerializedName("has_product_consultant")
+    private boolean hasProductConsultant;
+    @SerializedName("has_tasting_bar")
+    private boolean hasTestingBar;
+    @SerializedName("has_transit_access")
+    private  boolean hasTransitAccess;
+    @SerializedName("sunday_open")
+    private  int sundayOpen;
+    @SerializedName("sunday_close")
+    private  int sundayClose;
+    @SerializedName("tuesday_open")
+    private  int tuesdayOpen;
+    @SerializedName("tuesday_close")
+    private  int tuesdayClose;
+    @SerializedName("wednesday_open")
+    private  int wednesdayOpen;
+    @SerializedName("wednesday_close")
+    private int wednesdayClose;
+    @SerializedName("thursday_open")
+    private  int thursdayOpen;
+    @SerializedName("thursday_close")
+    private  int thursdayClose;
+    @SerializedName("friday_open")
+    private  int fridayOpen;
+    @SerializedName("friday_close")
+    private  int fridayClose;
+    @SerializedName("saturday_open")
+    private  int saturdayOpen;
+    @SerializedName("saturday_close")
+    private  int saturdayClose;
+    @SerializedName("monday_open")
+    private  int mondayOpen;
+    @SerializedName("monday_close")
+    private  int mondayClose;
+    @SerializedName("updated_at")
+    private  String updatedAt;
 
-    public Store(int id, boolean isDead, String name, String tags, String addressLine1, String addressLine2, String city, String postalCode, String telephone, String fax, double latitude, double longitude, int productsCount, boolean hasParking) {
+
+    public Store() {
+    }
+
+
+    public Store(int id, boolean isDead, String name, String tags, String addressLine1, String addressLine2, String city, String postalCode, String telephone, String fax, double latitude, double longitude, int productsCount, boolean hasParking, boolean hasProductConsultant, boolean hasTestingBar, boolean hasTransitAccess, int sundayOpen, int sundayClose, int tuesdayOpen, int tuesdayClose, int wednesdayOpen, int wednesdayClose, int thursdayOpen, int thursdayClose, int fridayOpen, int fridayClose, int saturdayOpen, int saturdayClose, int mondayOpen, int mondayClose, String updatedAt) {
         this.id = id;
         this.isDead = isDead;
         this.name = name;
@@ -66,6 +170,24 @@ public class Store implements Serializable {
         this.longitude = longitude;
         this.productsCount = productsCount;
         this.hasParking = hasParking;
+        this.hasProductConsultant = hasProductConsultant;
+        this.hasTestingBar = hasTestingBar;
+        this.hasTransitAccess = hasTransitAccess;
+        this.sundayOpen = sundayOpen;
+        this.sundayClose = sundayClose;
+        this.tuesdayOpen = tuesdayOpen;
+        this.tuesdayClose = tuesdayClose;
+        this.wednesdayOpen = wednesdayOpen;
+        this.wednesdayClose = wednesdayClose;
+        this.thursdayOpen = thursdayOpen;
+        this.thursdayClose = thursdayClose;
+        this.fridayOpen = fridayOpen;
+        this.fridayClose = fridayClose;
+        this.saturdayOpen = saturdayOpen;
+        this.saturdayClose = saturdayClose;
+        this.mondayOpen = mondayOpen;
+        this.mondayClose = mondayClose;
+        this.updatedAt = updatedAt;
     }
 
     public int getId() {
@@ -94,6 +216,14 @@ public class Store implements Serializable {
 
     public String getTags() {
         return tags;
+    }
+
+    public String getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(String updatedAt) {
+        this.updatedAt = updatedAt;
     }
 
     public void setTags(String tags) {
@@ -178,6 +308,142 @@ public class Store implements Serializable {
 
     public void setHasParking(boolean hasParking) {
         this.hasParking = hasParking;
+    }
+
+    public boolean isHasProductConsultant() {
+        return hasProductConsultant;
+    }
+
+    public void setHasProductConsultant(boolean hasProductConsultant) {
+        this.hasProductConsultant = hasProductConsultant;
+    }
+
+    public boolean isHasTestingBar() {
+        return hasTestingBar;
+    }
+
+    public void setHasTestingBar(boolean hasTestingBar) {
+        this.hasTestingBar = hasTestingBar;
+    }
+
+    public boolean isHasTransitAccess() {
+        return hasTransitAccess;
+    }
+
+    public void setHasTransitAccess(boolean hasTransitAccess) {
+        this.hasTransitAccess = hasTransitAccess;
+    }
+
+    public int getSundayOpen() {
+        return sundayOpen;
+    }
+
+    public void setSundayOpen(int sundayOpen) {
+        this.sundayOpen = sundayOpen;
+    }
+
+    public int getSundayClose() {
+        return sundayClose;
+    }
+
+    public void setSundayClose(int sundayClose) {
+        this.sundayClose = sundayClose;
+    }
+
+    public int getTuesdayOpen() {
+        return tuesdayOpen;
+    }
+
+    public void setTuesdayOpen(int tuesdayOpen) {
+        this.tuesdayOpen = tuesdayOpen;
+    }
+
+    public int getTuesdayClose() {
+        return tuesdayClose;
+    }
+
+    public void setTuesdayClose(int tuesdayClose) {
+        this.tuesdayClose = tuesdayClose;
+    }
+
+    public int getWednesdayOpen() {
+        return wednesdayOpen;
+    }
+
+    public void setWednesdayOpen(int wednesdayOpen) {
+        this.wednesdayOpen = wednesdayOpen;
+    }
+
+    public int getWednesdayClose() {
+        return wednesdayClose;
+    }
+
+    public void setWednesdayClose(int wednesdayClose) {
+        this.wednesdayClose = wednesdayClose;
+    }
+
+    public int getThursdayOpen() {
+        return thursdayOpen;
+    }
+
+    public void setThursdayOpen(int thursdayOpen) {
+        this.thursdayOpen = thursdayOpen;
+    }
+
+    public int getThursdayClose() {
+        return thursdayClose;
+    }
+
+    public void setThursdayClose(int thursdayClose) {
+        this.thursdayClose = thursdayClose;
+    }
+
+    public int getFridayOpen() {
+        return fridayOpen;
+    }
+
+    public void setFridayOpen(int fridayOpen) {
+        this.fridayOpen = fridayOpen;
+    }
+
+    public int getFridayClose() {
+        return fridayClose;
+    }
+
+    public void setFridayClose(int fridayClose) {
+        this.fridayClose = fridayClose;
+    }
+
+    public int getSaturdayOpen() {
+        return saturdayOpen;
+    }
+
+    public void setSaturdayOpen(int saturdayOpen) {
+        this.saturdayOpen = saturdayOpen;
+    }
+
+    public int getSaturdayClose() {
+        return saturdayClose;
+    }
+
+    public void setSaturdayClose(int saturdayClose) {
+        this.saturdayClose = saturdayClose;
+    }
+
+    public int getMondayOpen() {
+        return mondayOpen;
+    }
+
+    public void setMondayOpen(int mondayOpen) {
+        this.mondayOpen = mondayOpen;
+    }
+
+    public int getMondayClose() {
+        return mondayClose;
+    }
+
+    public void setMondayClose(int mondayClose) {
+        this.mondayClose = mondayClose;
     }
 
     /*{"id":217,
