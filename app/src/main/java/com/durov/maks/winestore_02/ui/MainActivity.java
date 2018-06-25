@@ -7,18 +7,14 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
-import android.view.MotionEvent;
 import android.widget.Toast;
 
 import com.durov.maks.winestore_02.R;
 import com.durov.maks.winestore_02.StoreApplication;
 import com.durov.maks.winestore_02.adapter.StoreAdapter;
-import com.durov.maks.winestore_02.database.StoreDatabaseHelper;
 import com.durov.maks.winestore_02.model.Store;
 import com.durov.maks.winestore_02.model.StoreList;
-import com.durov.maks.winestore_02.network.RequestStoreListInterface;
 import com.jakewharton.retrofit2.adapter.rxjava2.HttpException;
-import com.jakewharton.retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -26,8 +22,6 @@ import java.util.ArrayList;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.schedulers.Schedulers;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -40,10 +34,9 @@ public class MainActivity extends AppCompatActivity {
     private ArrayList<Store> storesArrayList;
     private StoreList storeList;
     private int nextPage;
-    private boolean isPageAddNow;
+    //private boolean isPageAddNow;
     private boolean isPageLast;
     private boolean offlineMode;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -53,7 +46,6 @@ public class MainActivity extends AppCompatActivity {
         storesArrayList = new ArrayList<>();
         nextPage =1;
         isPageLast =false;//if true: no need load new page
-        isPageAddNow = false;//if true: no need load new page (page already loaded)
         offlineMode =false;//if true: load page from database
         initRecyclerView();
         loadData();
@@ -65,17 +57,20 @@ public class MainActivity extends AppCompatActivity {
             RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getApplicationContext());
             recyclerView.setLayoutManager(layoutManager);
             recyclerView.setAdapter(storeAdapter);
-            recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener(){
                 @Override
-                public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
-                    super.onScrollStateChanged(recyclerView, newState);
-                    if (!recyclerView.canScrollVertically(1)) {
+                public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                    super.onScrolled(recyclerView, dx, dy);
+                    int position = recyclerView.computeVerticalScrollOffset() / recyclerView.getChildAt(0).getMeasuredHeight();
+                    Log.d("position: ",String.valueOf(position));
+                    if(position > storesArrayList.size()-7){
                         loadData();
+                        storeAdapter.setLoadData(true);
                         storeAdapter.notifyDataSetChanged();
-                        isPageAddNow = true;
                     }
                 }
-            });
+
+    });
             storeAdapter.setOnClick(new StoreAdapter.OnItemClicked() {
                 @Override
                 public void onItemClick(Store store) {
@@ -90,7 +85,7 @@ public class MainActivity extends AppCompatActivity {
             isPageLast = storeList.getPager().isFinalPage();
         }
         //load from network
-        if(!isPageLast && !isPageAddNow && !offlineMode) {
+        if(!isPageLast && !storeAdapter.isLoadData() && !offlineMode) {
             //Log.d(TAG,"online_mode");
             compositeDisposable.add(((StoreApplication) this.getApplication())
                     .getRequestStoreListInterface()
@@ -109,7 +104,7 @@ public class MainActivity extends AppCompatActivity {
             }else{
                 Log.d(TAG,"database return null");
             }
-            isPageAddNow = false;
+            storeAdapter.setLoadData(false);
         }
 
     }
@@ -119,10 +114,10 @@ public class MainActivity extends AppCompatActivity {
         this.storeList = storeList;
         if(storeList!=null){
             storesArrayList.addAll(storeList.getStores());
+            storeAdapter.setLoadData(false);
             storeAdapter.notifyDataSetChanged();
-            isPageAddNow = false;
         }else{
-            isPageAddNow = false;
+            storeAdapter.setLoadData(false);
             offlineMode = true;
             loadData();
         }
@@ -143,7 +138,7 @@ public class MainActivity extends AppCompatActivity {
             Toast.makeText(this,"You are offline",Toast.LENGTH_SHORT).show();
             loadData();
         }
-        isPageAddNow = false;
+        storeAdapter.setLoadData(false);
     }
 
     private void startStoreActivity(Store store){

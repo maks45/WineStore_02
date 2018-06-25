@@ -41,50 +41,6 @@ public class Store implements Serializable {
     public static final String SATURDAY_CLOSE = "saturday_close";
 
 
-    //variables
-
-    /*{"id":217,
-    "is_dead":false,
-    "name":"Queens Quay \u0026 Yonge",
-    "tags":"queens quay yonge 2 cooper street queen's toronto central toronto-central torontocentral m5e0b8",
-    "address_line_1":"2 Cooper Street",
-    "address_line_2":"Queen's Quay",
-    "city":"Toronto",
-    "postal_code":"M5E0B8",
-    "telephone":"(416) 864-6777",
-    "fax":"(416) 864-6863",
-    "latitude":43.643,
-    "longitude":-79.3723,
-    "products_count":5071,
-    "inventory_count":184579,
-    "inventory_price_in_cents":457923726,
-    "inventory_volume_in_milliliters":135626242,
-    "has_wheelchair_accessability":true,
-    "has_bilingual_services":true,
-    "has_product_consultant":true,
-    "has_tasting_bar":true,
-    "has_beer_cold_room":false,
-    "has_special_occasion_permits":false,
-    "has_vintages_corner":true,
-    "has_parking":true,
-    "has_transit_access":true,
-    "sunday_open":660,
-    "sunday_close":1080,
-    "monday_open":540,
-    "monday_close":1320,
-    "tuesday_open":540,
-    "tuesday_close":1320,
-    "wednesday_open":540,
-    "wednesday_close":1320,
-    "thursday_open":540,
-    "thursday_close":1320,
-    "friday_open":540,
-    "friday_close":1320,
-    "saturday_open":540,
-    "saturday_close":1320,
-    "updated_at":"2018-06-17T14:15:21.972Z",
-    "store_no":217}*/
-
     @SerializedName("id")
     private int id;
     @SerializedName("is_dead")
@@ -155,7 +111,7 @@ public class Store implements Serializable {
     }
 
 
-    public Store(int id, boolean isDead, String name, String tags, String addressLine1, String addressLine2, String city, String postalCode, String telephone, String fax, double latitude, double longitude, int productsCount, boolean hasParking, boolean hasProductConsultant, boolean hasTestingBar, boolean hasTransitAccess, int sundayOpen, int sundayClose, int tuesdayOpen, int tuesdayClose, int wednesdayOpen, int wednesdayClose, int thursdayOpen, int thursdayClose, int fridayOpen, int fridayClose, int saturdayOpen, int saturdayClose, int mondayOpen, int mondayClose, String updatedAt) {
+    public Store(int id, boolean isDead, String name, String tags, String addressLine1, String addressLine2, String city, String postalCode, String telephone, String fax, double latitude, double longitude, int productsCount, boolean hasParking, boolean hasProductConsultant, boolean hasTestingBar, boolean hasTransitAccess, int sundayOpen, int sundayClose, int tuesdayOpen, int tuesdayClose, int wednesdayOpen, int wednesdayClose, int thursdayOpen, int thursdayClose, int fridayOpen, int fridayClose, int saturdayOpen, int saturdayClose, int mondayOpen, int mondayClose, String updatedAt){
         this.id = id;
         this.isDead = isDead;
         this.name = name;
@@ -446,46 +402,5 @@ public class Store implements Serializable {
         this.mondayClose = mondayClose;
     }
 
-    /*{"id":217,
-    "is_dead":false,
-    "name":"Queens Quay \u0026 Yonge",
-    "tags":"queens quay yonge 2 cooper street queen's toronto central toronto-central torontocentral m5e0b8",
-    "address_line_1":"2 Cooper Street",
-    "address_line_2":"Queen's Quay",
-    "city":"Toronto",
-    "postal_code":"M5E0B8",
-    "telephone":"(416) 864-6777",
-    "fax":"(416) 864-6863",
-    "latitude":43.643,
-    "longitude":-79.3723,
-    "products_count":5071,
-    "inventory_count":184579,
-    "inventory_price_in_cents":457923726,
-    "inventory_volume_in_milliliters":135626242,
-    "has_wheelchair_accessability":true,
-    "has_bilingual_services":true,
-    "has_product_consultant":true,
-    "has_tasting_bar":true,
-    "has_beer_cold_room":false,
-    "has_special_occasion_permits":false,
-    "has_vintages_corner":true,
-    "has_parking":true,
-    "has_transit_access":true,
-    "sunday_open":660,
-    "sunday_close":1080,
-    "monday_open":540,
-    "monday_close":1320,
-    "tuesday_open":540,
-    "tuesday_close":1320,
-    "wednesday_open":540,
-    "wednesday_close":1320,
-    "thursday_open":540,
-    "thursday_close":1320,
-    "friday_open":540,
-    "friday_close":1320,
-    "saturday_open":540,
-    "saturday_close":1320,
-    "updated_at":"2018-06-17T14:15:21.972Z",
-    "store_no":217}*/
 
 }

@@ -202,7 +202,7 @@ public class StoreDatabaseHelper extends SQLiteOpenHelper {
                 contentValues.put(Store.SATURDAY_CLOSE,Long.valueOf(store.getSaturdayClose()));
                 contentValues.put(Store.MONDAY_OPEN,Long.valueOf(store.getMondayOpen()));
                 contentValues.put(Store.MONDAY_CLOSE,Long.valueOf(store.getMondayClose()));
-                contentValues.put(Store.UPDATED_AT,Long.valueOf(store.getUpdatedAt()));
+                contentValues.put(Store.UPDATED_AT,String.valueOf(store.getUpdatedAt()));
                 if(cursor.getCount()>0){
                     sqLiteDatabase.update(STORES_TABLE_NAME,contentValues,"id="+String.valueOf(store.getId()),null);
                 }else{
