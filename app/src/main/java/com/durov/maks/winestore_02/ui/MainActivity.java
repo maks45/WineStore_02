@@ -54,7 +54,7 @@ public class MainActivity extends AppCompatActivity {
             Log.d(TAG,"init recycler view");
             RecyclerView recyclerView = findViewById(R.id.main_activity_recycler_view);
             storeAdapter = new StoreAdapter(storesArrayList);
-            RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getApplicationContext());
+            LinearLayoutManager layoutManager = new LinearLayoutManager(getApplicationContext());
             recyclerView.setLayoutManager(layoutManager);
             recyclerView.setAdapter(storeAdapter);
             recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener(){
@@ -62,8 +62,10 @@ public class MainActivity extends AppCompatActivity {
                 public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
                     super.onScrolled(recyclerView, dx, dy);
                     int position = recyclerView.computeVerticalScrollOffset() / recyclerView.getChildAt(0).getMeasuredHeight();
-                    Log.d("position: ",String.valueOf(position));
-                    if(position > storesArrayList.size()-7){
+                    //Log.d("position: ",String.valueOf(position));
+                    //layoutManager.getChildCount();
+                    //layoutManager.findFirstVisibleItemPosition();
+                    if(layoutManager.findFirstVisibleItemPosition()+ layoutManager.getChildCount() > storesArrayList.size()-3){
                         loadData();
                         storeAdapter.setLoadData(true);
                         storeAdapter.notifyDataSetChanged();
@@ -110,7 +112,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void handleResponse(StoreList storeList) {
-        Log.d(TAG,"handleResponse");
+        //Log.d(TAG,"handleResponse");
         this.storeList = storeList;
         if(storeList!=null){
             storesArrayList.addAll(storeList.getStores());
