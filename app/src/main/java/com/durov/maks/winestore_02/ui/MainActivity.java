@@ -57,15 +57,11 @@ public class MainActivity extends AppCompatActivity {
             LinearLayoutManager layoutManager = new LinearLayoutManager(getApplicationContext());
             recyclerView.setLayoutManager(layoutManager);
             recyclerView.setAdapter(storeAdapter);
-            recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener(){
+            recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
                 @Override
-                public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
-                    super.onScrolled(recyclerView, dx, dy);
-                    int position = recyclerView.computeVerticalScrollOffset() / recyclerView.getChildAt(0).getMeasuredHeight();
-                    //Log.d("position: ",String.valueOf(position));
-                    //layoutManager.getChildCount();
-                    //layoutManager.findFirstVisibleItemPosition();
-                    if(layoutManager.findFirstVisibleItemPosition()+ layoutManager.getChildCount() > storesArrayList.size()-3){
+                public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
+                    super.onScrollStateChanged(recyclerView, newState);
+                    if(layoutManager.findFirstVisibleItemPosition()+ layoutManager.getChildCount() > storesArrayList.size()-1){
                         loadData();
                         storeAdapter.setLoadData(true);
                         storeAdapter.notifyDataSetChanged();
