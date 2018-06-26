@@ -6,20 +6,49 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".ui.StoreActivity"
-    android:orientation="vertical">
-    <RelativeLayout
+    android:orientation="vertical"
+    android:padding="4dp">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:layout_weight="0.07"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:textSize="20sp"
+        android:id="@+id/activity_store_store_name"
+        android:text="Store Name" />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:layout_weight="0.05"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:textSize="15sp"
+        android:id="@+id/activity_store_store_city"
+        android:text="Store city" />
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="0.4">
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"
-            android:textSize="20sp"
-            android:id="@+id/activity_store_store_name"
-            />
-    </RelativeLayout>
+        android:layout_weight="0.1"
+        android:orientation="horizontal">
+    <TextView
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="0.8"
+        android:textSize="15sp"
+        android:id="@+id/activity_store_adress"
+        android:text="Store adress line"
+        android:lines="2"/>
+    <ImageButton
+        android:layout_width="0dp"
+        android:layout_weight="0.1"
+        android:layout_height="wrap_content"
+        android:background="#00ffffff"
+        android:src="@drawable/ic_action_show_on_map"
+        android:id="@+id/store_activity_button_show_on_map"
+        android:onClick="OnClick"/>
+    </LinearLayout>
     <android.support.v7.widget.RecyclerView
         android:layout_width="match_parent"
         android:layout_height="0dp"

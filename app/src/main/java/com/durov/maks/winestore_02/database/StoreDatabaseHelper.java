@@ -158,8 +158,6 @@ public class StoreDatabaseHelper extends SQLiteOpenHelper {
             }catch (Exception e){
                 e.printStackTrace();
             }
-            //Log.d(MainActivity.TAG,"databasehelper return null");
-            //Log.d(MainActivity.TAG,String.valueOf(stores.size()));
             return null;
         }
 

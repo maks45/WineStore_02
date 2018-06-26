@@ -42,7 +42,6 @@ public class StoreAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     }
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder viewHolder, int i){
-        try {
             if (viewHolder instanceof StoreViewHolder) {
                 StoreViewHolder storeViewHolder = (StoreViewHolder) viewHolder;
                 storeViewHolder.textViewStoreName.setText(stores.get(i).getName());
@@ -59,9 +58,6 @@ public class StoreAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             } else if (viewHolder instanceof ProgressBarViewHolder) {
                 ProgressBarViewHolder progressBarViewHolder = (ProgressBarViewHolder) viewHolder;
             }
-        }catch (Exception e){
-            e.printStackTrace();
-        }
     }
 
     @Override

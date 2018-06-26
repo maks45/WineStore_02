@@ -402,5 +402,11 @@ public class Store implements Serializable {
         this.mondayClose = mondayClose;
     }
 
+    public String getFullAdress(){
+        if(addressLine2!=null){
+            return addressLine1+"\n"+addressLine2;
+        }
+        return addressLine1;
+    }
 
 }

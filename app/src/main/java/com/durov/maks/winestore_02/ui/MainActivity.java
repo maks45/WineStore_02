@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.widget.AbsListView;
 import android.widget.Toast;
 
 import com.durov.maks.winestore_02.R;
@@ -59,12 +60,12 @@ public class MainActivity extends AppCompatActivity {
             recyclerView.setAdapter(storeAdapter);
             recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
                 @Override
-                public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
-                    super.onScrollStateChanged(recyclerView, newState);
+                public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                    super.onScrolled(recyclerView, dx, dy);
                     if(layoutManager.findFirstVisibleItemPosition()+ layoutManager.getChildCount() > storesArrayList.size()-1){
                         loadData();
                         storeAdapter.setLoadData(true);
-                        storeAdapter.notifyDataSetChanged();
+                        recyclerView.post(() -> storeAdapter.notifyDataSetChanged());
                     }
                 }
 
