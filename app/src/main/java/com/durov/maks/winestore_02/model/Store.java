@@ -1,9 +1,16 @@
 package com.durov.maks.winestore_02.model;
 
+import android.arch.persistence.room.ColumnInfo;
+import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.Ignore;
+import android.arch.persistence.room.Index;
+import android.arch.persistence.room.PrimaryKey;
+
 import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
 
+@Entity(indices = {@Index(value = {"id"}, unique = true)})
 public class Store implements Serializable {
 
     //constants for database
@@ -41,6 +48,9 @@ public class Store implements Serializable {
     public static final String SATURDAY_CLOSE = "saturday_close";
 
 
+
+    //@ColumnInfo(name = "id")
+    @PrimaryKey
     @SerializedName("id")
     private int id;
     @SerializedName("is_dead")
@@ -54,6 +64,7 @@ public class Store implements Serializable {
     @SerializedName("address_line_2")
     private String addressLine2;
     @SerializedName("city")
+    @ColumnInfo(name = "city")
     private String city;
     @SerializedName("postal_code")
     private String postalCode;
@@ -106,7 +117,7 @@ public class Store implements Serializable {
     @SerializedName("updated_at")
     private  String updatedAt;
 
-
+    @Ignore
     public Store() {
     }
 

@@ -62,15 +62,8 @@ public class StoreAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
     @Override
     public int getItemCount(){
-        if(stores == null && isLoadData){
-            return 1;
-        }else if(stores.size()==0 && isLoadData){
-            return 0;
-        }else if(isLoadData) {
-            return stores.size()+1;
-        }
-        return stores.size();
-        }
+        return stores.size() + (isLoadData ? 1 : 0);
+    }
 
     @Override
     public int getItemViewType(int position) {
