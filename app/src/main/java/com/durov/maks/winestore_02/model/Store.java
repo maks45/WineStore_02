@@ -5,13 +5,15 @@ import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.Ignore;
 import android.arch.persistence.room.Index;
 import android.arch.persistence.room.PrimaryKey;
+import android.os.Parcel;
+import android.os.Parcelable;
 
 import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
 
 @Entity(indices = {@Index(value = {"id"}, unique = true)})
-public class Store implements Serializable {
+public class Store implements Parcelable {
 
     //constants for database
     public static final String ID = "id";
@@ -420,4 +422,91 @@ public class Store implements Serializable {
         return addressLine1;
     }
 
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeInt(this.id);
+        dest.writeByte(this.isDead ? (byte) 1 : (byte) 0);
+        dest.writeString(this.name);
+        dest.writeString(this.tags);
+        dest.writeString(this.addressLine1);
+        dest.writeString(this.addressLine2);
+        dest.writeString(this.city);
+        dest.writeString(this.postalCode);
+        dest.writeString(this.telephone);
+        dest.writeString(this.fax);
+        dest.writeDouble(this.latitude);
+        dest.writeDouble(this.longitude);
+        dest.writeInt(this.productsCount);
+        dest.writeByte(this.hasParking ? (byte) 1 : (byte) 0);
+        dest.writeByte(this.hasProductConsultant ? (byte) 1 : (byte) 0);
+        dest.writeByte(this.hasTestingBar ? (byte) 1 : (byte) 0);
+        dest.writeByte(this.hasTransitAccess ? (byte) 1 : (byte) 0);
+        dest.writeInt(this.sundayOpen);
+        dest.writeInt(this.sundayClose);
+        dest.writeInt(this.tuesdayOpen);
+        dest.writeInt(this.tuesdayClose);
+        dest.writeInt(this.wednesdayOpen);
+        dest.writeInt(this.wednesdayClose);
+        dest.writeInt(this.thursdayOpen);
+        dest.writeInt(this.thursdayClose);
+        dest.writeInt(this.fridayOpen);
+        dest.writeInt(this.fridayClose);
+        dest.writeInt(this.saturdayOpen);
+        dest.writeInt(this.saturdayClose);
+        dest.writeInt(this.mondayOpen);
+        dest.writeInt(this.mondayClose);
+        dest.writeString(this.updatedAt);
+    }
+
+    protected Store(Parcel in) {
+        this.id = in.readInt();
+        this.isDead = in.readByte() != 0;
+        this.name = in.readString();
+        this.tags = in.readString();
+        this.addressLine1 = in.readString();
+        this.addressLine2 = in.readString();
+        this.city = in.readString();
+        this.postalCode = in.readString();
+        this.telephone = in.readString();
+        this.fax = in.readString();
+        this.latitude = in.readDouble();
+        this.longitude = in.readDouble();
+        this.productsCount = in.readInt();
+        this.hasParking = in.readByte() != 0;
+        this.hasProductConsultant = in.readByte() != 0;
+        this.hasTestingBar = in.readByte() != 0;
+        this.hasTransitAccess = in.readByte() != 0;
+        this.sundayOpen = in.readInt();
+        this.sundayClose = in.readInt();
+        this.tuesdayOpen = in.readInt();
+        this.tuesdayClose = in.readInt();
+        this.wednesdayOpen = in.readInt();
+        this.wednesdayClose = in.readInt();
+        this.thursdayOpen = in.readInt();
+        this.thursdayClose = in.readInt();
+        this.fridayOpen = in.readInt();
+        this.fridayClose = in.readInt();
+        this.saturdayOpen = in.readInt();
+        this.saturdayClose = in.readInt();
+        this.mondayOpen = in.readInt();
+        this.mondayClose = in.readInt();
+        this.updatedAt = in.readString();
+    }
+
+    public static final Parcelable.Creator<Store> CREATOR = new Parcelable.Creator<Store>() {
+        @Override
+        public Store createFromParcel(Parcel source) {
+            return new Store(source);
+        }
+
+        @Override
+        public Store[] newArray(int size) {
+            return new Store[size];
+        }
+    };
 }

@@ -25,7 +25,7 @@ public class StoreActivity extends AppCompatActivity {
         setContentView(R.layout.activity_store);
         //init
         Intent intent = getIntent();
-        store =(Store) intent.getSerializableExtra(MainActivity.EXTRA_STORE);
+        store =(Store) intent.getParcelableExtra(MainActivity.EXTRA_STORE);
         recyclerView = findViewById(R.id.activity_store_recyclerview);
         textViewStoreName = findViewById(R.id.activity_store_store_name);
         textViewStoreCity = findViewById(R.id.activity_store_store_city);
@@ -48,13 +48,13 @@ public class StoreActivity extends AppCompatActivity {
         }
     }
     private void startMapActivity(){
-        /*Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("geo:geo:0,0?q="+String.valueOf(store.getLatitude())
+        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("geo:geo:0,0?q="+String.valueOf(store.getLatitude())
                 +","+String.valueOf(store.getLongitude())+"("+store.getName()+")"));
-        startActivity(intent);*/
-        Uri gmmIntentUri = Uri.parse("google.maps:"+String.valueOf(store.getLatitude())+","+String.valueOf(store.getLongitude()));
-        Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
-        mapIntent.setPackage("com.google.android.apps.maps");
-        startActivity(mapIntent);
+        startActivity(intent);
+        //Uri gmmIntentUri = Uri.parse("google.maps:"+String.valueOf(store.getLatitude())+","+String.valueOf(store.getLongitude()));
+        //Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
+        //mapIntent.setPackage("com.google.android.apps.maps");
+        //startActivity(mapIntent);
     }
 
 }

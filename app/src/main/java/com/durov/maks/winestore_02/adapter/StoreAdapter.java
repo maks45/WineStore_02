@@ -44,7 +44,8 @@ public class StoreAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder viewHolder, int i){
             if (viewHolder instanceof StoreViewHolder) {
                 StoreViewHolder storeViewHolder = (StoreViewHolder) viewHolder;
-                storeViewHolder.textViewStoreName.setText(stores.get(i).getName());
+                String name = stores.get(i).getName()+" : "+stores.get(i).getId();
+                storeViewHolder.textViewStoreName.setText(name);
                 storeViewHolder.textViewStoreNo.setText(String.valueOf(stores.get(i).getId()));
                 storeViewHolder.textViewStoreAdress1.setText(stores.get(i).getAddressLine1());
                 storeViewHolder.textViewStoreCity.setText(stores.get(i).getCity());

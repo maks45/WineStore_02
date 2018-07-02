@@ -62,4 +62,6 @@ public class StoreApplication extends Application{
     public StoreDao getStoreDatabase(){
         return storeDao;
     }
+
+
 }

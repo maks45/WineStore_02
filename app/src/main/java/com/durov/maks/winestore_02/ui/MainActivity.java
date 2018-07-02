@@ -1,6 +1,7 @@
 package com.durov.maks.winestore_02.ui;
 
 import android.content.Intent;
+import android.os.PersistableBundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -12,7 +13,6 @@ import android.widget.Toast;
 import com.durov.maks.winestore_02.R;
 import com.durov.maks.winestore_02.StoreApplication;
 import com.durov.maks.winestore_02.adapter.StoreAdapter;
-import com.durov.maks.winestore_02.database.StoreDao;
 import com.durov.maks.winestore_02.model.Store;
 import com.durov.maks.winestore_02.model.StoreList;
 import com.jakewharton.retrofit2.adapter.rxjava2.HttpException;
@@ -34,6 +34,11 @@ public class MainActivity extends AppCompatActivity {
     public static final int STORES_PER_PAGE = 50;
     public static final String TAG = "MY_LOG";
     public static final String EXTRA_STORE ="com.durov.maks.winestore_02.STORE";
+    public static final String PARCELABLE_STORE_ARRAY_LIST = "com.durov.maks.winestore_02.STORE_ARRAY_LIST";
+    public static final String STORE_NEXT_PAGE = "com.durov.maks.winestore_02.STORE_NEXT_PAGE";
+    public static final String STORE_IS_PAGE_LAST = "com.durov.maks.winestore_02.STORE_IS_PAGE_LAST";
+    public static final String STORE_OFFLINE_MODE = "com.durov.maks.winestore_02.STORE_OFFLINE_MODE";
+
 
     private CompositeDisposable compositeDisposable;
     private StoreAdapter storeAdapter;
@@ -51,14 +56,33 @@ public class MainActivity extends AppCompatActivity {
         storeApplication = (StoreApplication) this.getApplication();
         compositeDisposable = new CompositeDisposable();
         storesArrayList = new ArrayList<>();
-        nextPage =1;
-        isPageLast =false; //if true: no need load new page
-        offlineMode =false; //if true: load page from database
         initRecyclerView();
-        loadData();
+        if(savedInstanceState!=null){
+            storesArrayList.addAll(savedInstanceState.getParcelableArrayList(PARCELABLE_STORE_ARRAY_LIST));
+            nextPage = savedInstanceState.getInt(STORE_NEXT_PAGE);
+            isPageLast = savedInstanceState.getBoolean(STORE_IS_PAGE_LAST);
+            offlineMode = savedInstanceState.getBoolean(STORE_OFFLINE_MODE);
+        }else{
+            nextPage =1;
+            isPageLast =false; //if true: no need load new page
+            offlineMode =false; //if true: load page from database
+            loadDataFromNetwork();
+        }
     }
+
+
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putParcelableArrayList(PARCELABLE_STORE_ARRAY_LIST,storesArrayList);
+        outState.putInt(STORE_NEXT_PAGE,nextPage);
+        outState.putBoolean(STORE_IS_PAGE_LAST,isPageLast);
+        outState.putBoolean(STORE_OFFLINE_MODE,offlineMode);
+    }
+
     private void initRecyclerView(){
-            Log.d(TAG,"init recycler view");
+            //Log.d(TAG,"init recycler view");
             RecyclerView recyclerView = findViewById(R.id.main_activity_recycler_view);
             storeAdapter = new StoreAdapter(storesArrayList);
             LinearLayoutManager layoutManager = new LinearLayoutManager(getApplicationContext());
@@ -68,14 +92,10 @@ public class MainActivity extends AppCompatActivity {
                 @Override
                 public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
                     super.onScrolled(recyclerView, dx, dy);
-                    if(layoutManager.findFirstVisibleItemPosition()+ layoutManager.getChildCount() > storesArrayList.size()-1){
-                        if(!offlineMode) {
-                            loadData();
-                            storeAdapter.setLoadData(true);
-                            recyclerView.post(() -> storeAdapter.notifyDataSetChanged());
-                        }else{
-                            //check internet connection here
-                        }
+                    if(layoutManager.findFirstVisibleItemPosition()+ layoutManager.getChildCount() > storesArrayList.size()-3){
+                        loadDataFromNetwork();
+                        storeAdapter.setLoadData(true);
+                        recyclerView.post(() -> storeAdapter.notifyDataSetChanged());
                     }
                 }
 
@@ -83,40 +103,42 @@ public class MainActivity extends AppCompatActivity {
             storeAdapter.setOnClick(this::startStoreActivity);
     }
 
-    private void loadData(){
-        if(storeList!=null && !offlineMode){
+    private void loadDataFromNetwork() {
+       /* if (storeList != null) {
             nextPage = storeList.getPager().getNextPage();
             isPageLast = storeList.getPager().isFinalPage();
-        }
+        }*/
         //load from network
-        if(!isPageLast && !storeAdapter.isLoadData() && !offlineMode) {
+        if (!isPageLast && !storeAdapter.isLoadData()) {
             //Log.d(TAG,"online_mode");
             compositeDisposable.add(storeApplication
                     .getRequestStoreListInterface()
-                    .register(String.valueOf(nextPage),String.valueOf(STORES_PER_PAGE))
+                    .register(String.valueOf(nextPage), String.valueOf(STORES_PER_PAGE))
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribeOn(Schedulers.io())
                     .subscribe(this::handleResponse, this::handleError));
         }
+    }
+    private void loadDataFromDataBase(){
         //load from database if you are offline
-        if(offlineMode){
+        if(!storeAdapter.isLoadData()){
             Toast.makeText(this,"You are offline",Toast.LENGTH_SHORT).show();
             compositeDisposable.add(Single.fromCallable(
-                    new CallableGetStoresFromDb(storeApplication.getStoreDatabase()))
+                    new CallableGetStoresFromDb())
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(new Consumer<List<Store>>() {
                         @Override
                         public void accept(List<Store> stores) throws Exception {
-                            changeData(stores);
+                            nextPage = stores.size()/STORES_PER_PAGE+1;
+                            changeDisplayData(stores);
                         }
                     }, new Consumer<Throwable>() {
-                                @Override
-                                public void accept(final Throwable throwable) throws Exception {
-                                    throwable.printStackTrace();
-                                }
-                            })
-                    );
+                        @Override
+                        public void accept(final Throwable throwable) throws Exception {
+                            throwable.printStackTrace();
+                        }
+                    }));
         }
     }
 
@@ -124,29 +146,29 @@ public class MainActivity extends AppCompatActivity {
         //Log.d(TAG,"handleResponse");
         this.storeList = storeList;
         if(storeList!=null){
-            changeData(storeList.getStores());
-        }else{
-            storeAdapter.setLoadData(false);
-            offlineMode = true;
-            loadData();
+            nextPage = storeList.getPager().getNextPage();
+            isPageLast = storeList.getPager().isFinalPage();
+            offlineMode =false;
+            changeDisplayData(storeList.getStores());
         }
         if(!offlineMode) {
-            Callable<Void> callable = new Callable<Void>() {
+            compositeDisposable.add(Completable.fromCallable( new Callable<Void>() {
                 @Override
                 public Void call() throws Exception {
                     storeApplication.getStoreDatabase().insert(storeList.getStores());
-                    Log.d("Write db in thread",Thread.currentThread().getName());
+                    //Log.d("Write db in thread",Thread.currentThread().getName());
                     return null;
                 }
-            };
-            compositeDisposable.add(Completable.fromCallable(callable)
+            })
                     .subscribeOn(Schedulers.io())
                     .subscribe());
 
         }
     }
-    private void changeData(List<Store> stores){
-        storesArrayList.clear();
+
+    private void changeDisplayData(List<Store> stores){
+        if(offlineMode){storesArrayList.clear();}
+        storeAdapter.setLoadData(false);
         storesArrayList.addAll(stores);
         storeAdapter.notifyDataSetChanged();
     }
@@ -159,11 +181,14 @@ public class MainActivity extends AppCompatActivity {
         // A network error happened
         if (error instanceof IOException) {
             Log.i(TAG, error.getMessage() + " / " + error.getClass());
-            Log.d("On offline mode","true");
-            offlineMode =true;
-            loadData();
+            //Log.d("On offline mode","true");
+            storeAdapter.setLoadData(false);
+            if(!offlineMode) {
+                offlineMode = true;
+                loadDataFromDataBase();
+            }
         }
-        storeAdapter.setLoadData(false);
+        //storeAdapter.setLoadData(false);
     }
 
     private void startStoreActivity(Store store){
@@ -179,14 +204,10 @@ public class MainActivity extends AppCompatActivity {
     }
 
     class CallableGetStoresFromDb implements Callable<List<Store>> {
-        StoreDao storeDao;
-        public CallableGetStoresFromDb(StoreDao storeDao) {
-            this.storeDao = storeDao;
-        }
         @Override
         public List<Store> call() throws Exception {
-            Log.d("Get databese in thread",Thread.currentThread().getName());
-            return storeDao.getAll();
+            //Log.d("Get databese in thread",Thread.currentThread().getName());
+            return storeApplication.getStoreDatabase().getAll();
         }
     }
 
